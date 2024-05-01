@@ -1,0 +1,17 @@
+.DS_Store/
+
+.git/
+
+.vscode/
+
+.venv/
+venv/
+
+__pycache__/
+
+*.pyc
+*.pyo
+*.pyd
+
+*.pdf
+*.apk
