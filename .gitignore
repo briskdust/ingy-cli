@@ -15,3 +15,6 @@ __pycache__/
 
 *.pdf
 *.apk
+*.json
+
+.idea/
