@@ -36,13 +36,6 @@ def run_trivy_scan():
         return jsonify({"error": "Trivy scan failed", "details": str(e)}), 500
 
 
-@app.route('/trial', methods=['GET'])
-def run_trial():
-    name1 = request.args.get('apikey')
-    print(name1)
-    return jsonify({"message": "Scan completed successfully", "output": name1}), 200
-
-
 @app.route('/mobsf', methods=['GET'])
 def run_mobsf_scan():
     api_key = request.args.get('apikey')

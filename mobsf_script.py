@@ -6,14 +6,37 @@ from tabulate import tabulate
 import click
 import textwrap
 
-
 SERVER = "http://127.0.0.1:8000"
 
 
-@click.command()
+@click.group()
+def main():
+    pass
+
+
+@main.group()
+def cloud():
+    pass
+
+
+@main.group()
+def mobile():
+    pass
+
+
+@main.group()
+def gateway():
+    pass
+
+
+@mobile.command()
+def trial():
+    print("Trial")
+
+@mobile.command()
 @click.argument('files', nargs=-1)
 @click.option('--apikey', envvar='MOBSF_APIKEY', prompt=True, help='API key for authentication')
-def main(files, apikey):
+def mobsf(files, apikey):
     if not files:
         file1 = click.prompt("Enter the file path")
         file2 = click.prompt("Enter the file path of another apk package, enter \"n\" to skip")
