@@ -1,6 +1,7 @@
 import json
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
+import subprocess
 from utils import remove_non_security_related_keys, prettify_json
 from tabulate import tabulate
 import click
@@ -29,14 +30,12 @@ def gateway():
     pass
 
 
-@mobile.command()
-def trial():
-    print("Trial")
-
+# ------------------------------- MOBSF Command -------------------------------
 @mobile.command()
 @click.argument('files', nargs=-1)
 @click.option('--apikey', envvar='MOBSF_APIKEY', prompt=True, help='API key for authentication')
 def mobsf(files, apikey):
+    """Scan and analyze APK files for security vulnerabilities using MobSF."""
     if not files:
         file1 = click.prompt("Enter the file path")
         file2 = click.prompt("Enter the file path of another apk package, enter \"n\" to skip")
@@ -69,6 +68,39 @@ def mobsf(files, apikey):
         prettify_json(comparison)
 
 
+# ------------------------------- Cloud Command -------------------------------
+@cloud.command()
+@click.option('--name', prompt=True, help='Name of the Docker image to scan')
+@click.option("--html", is_flag=True, help="Generate HTML report")
+def trivy(name, html):
+    """Run Trivy scan for a Docker image."""
+    if html:
+        trimmed_name = name.split("/")[-1]
+        # Define the Trivy command
+        output_file = f"/Users/briskdust/{trimmed_name}.html"
+        template_path = "/Users/briskdust/html.tpl"
+        cmd = [
+            "trivy", "image",
+            "--format", "template",
+            "--template", f"@{template_path}",
+            "-o", output_file,
+            name
+        ]
+    else:
+        cmd = ["trivy", "image", name]
+
+    # Execute the Trivy command
+    try:
+        subprocess.run(cmd, check=True)
+        click.echo("Scan completed successfully")
+        if html:
+            click.echo(f"Output file: {output_file}")
+    except subprocess.CalledProcessError as e:
+        click.echo("Trivy scan failed")
+        click.echo(f"Details: {str(e)}")
+
+
+# ------------------------------- utils -------------------------------
 def upload(x, apikey):
     """Upload File"""
     print(f"Uploading file {x}")
@@ -138,7 +170,10 @@ def gen_table(json_dict):
 
 
 def wrap_text(text, width=120):
-    """Wrap text to the specified width using textwrap library, handling None values and preserving original new lines."""
+    """
+    Wrap text to the specified width using textwrap library,
+    handling None values and preserving original new lines.
+    """
     if text is None:
         return None
 
