@@ -46,6 +46,8 @@ def mobsf(files, apikey):
     """Process files and generate reports."""
     responses = [upload(file, apikey) for file in files]
 
+    scan(responses[0], apikey)
+
     rep_json = json_resp(responses[0], apikey)
     new_rep_json = remove_non_security_related_keys(rep_json)
     j_dict = json.loads(new_rep_json)
@@ -55,6 +57,7 @@ def mobsf(files, apikey):
     print(tabulate(wrapped_data, headers=["Key", "Value"], tablefmt="grid"))
 
     if len(files) == 2:
+        scan(responses[1], apikey)
         rep_json_2 = json_resp(responses[1], apikey)
         new_rep_json_2 = remove_non_security_related_keys(rep_json_2)
         j_dict_2 = json.loads(new_rep_json_2)
@@ -108,6 +111,7 @@ def upload(x, apikey):
     headers = {'Content-Type': multipart_data.content_type, 'Authorization': apikey}
     response = requests.post(SERVER + '/api/v1/upload', data=multipart_data, headers=headers)
     print(response.text)
+
     return response.text
 
 
@@ -126,7 +130,7 @@ def json_resp(data, apikey):
     headers = {'Authorization': apikey}
     data = {"hash": json.loads(data)["hash"]}
     response = requests.post(SERVER + '/api/v1/report_json', data=data, headers=headers)
-    # print(response.text)
+
     return response.text
 
 
