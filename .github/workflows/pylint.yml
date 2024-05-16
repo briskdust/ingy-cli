@@ -22,6 +22,10 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install
+        
+    - name: Install pylint
+      run: |
+        poetry add pylint
 
     - name: Run pylint
       run: |
