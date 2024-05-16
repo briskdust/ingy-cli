@@ -18,8 +18,8 @@ A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files 
 1. **Clone the repository:**
 
     ```sh
-    git clone https://github.com/briskdust/security-scanner-cli.git
-    cd security-scanner-cli
+    git clone https://github.com/briskdust/ingy-cli.git
+    cd ingy-cli
     ```
 
 2. **Install the required Python packages:**
