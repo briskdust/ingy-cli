@@ -3,9 +3,12 @@ MOBSF REST API Python Requests
 """
 
 import json
+import re
+
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from tabulate import tabulate
+import textwrap
 
 SERVER = "http://127.0.0.1:8000"
 
@@ -126,3 +129,89 @@ def remove_non_security_related_keys(data):
 
     # Return the modified data as a JSON string
     return json.dumps(filtered_dict, indent=4)
+
+
+def process_json(json_str):
+    data = json_str
+
+    table_data = []
+
+    # Define table headers
+    headers = ["Severity", "Title", "Description", "Section"]
+
+    # Define a function to colorize text
+    def colorize_text(text, color_code):
+        return f"\033[{color_code}m{text}\033[0m"
+
+    def wrap_text(text, width=60):
+        return textwrap.TextWrapper(width=width, break_long_words=False, break_on_hyphens=False,
+                                    replace_whitespace=False).fill(text)
+
+    # Deal with each severity level
+    for severity in ["high", "warning", "info", "secure", "hotspot"]:
+        if severity in data:
+            for item in data[severity]:
+                if severity == "high":
+                    severity_text = colorize_text("HIGH", "91")  # Red
+                elif severity == "warning":
+                    severity_text = colorize_text("WARNING", "93")  # Yellow
+                elif severity == "info":
+                    severity_text = colorize_text("INFO", "94")  # Blue
+                elif severity == "secure":
+                    severity_text = colorize_text("SECURE", "92")  # Green
+                elif severity == "hotspot":
+                    severity_text = colorize_text("HOTSPOT", "95")  # Magenta
+
+                wrapped_title = wrap_text(item["title"])
+                wrapped_description = wrap_text(item["description"])
+                wrapped_section = wrap_text(item["section"])
+
+                table_data.append([severity_text, wrapped_title, wrapped_description, wrapped_section])
+
+    # Add additional information
+    additional_info = [
+        ["Security Score", colorize_score(data.get("security_score", "N/A"))],
+        ["App Name", data.get("app_name", "N/A")],
+        ["File Name", data.get("file_name", "N/A")],
+        ["Hash", data.get("hash", "N/A")],
+        ["Version", data.get("version_name", "N/A")],
+        ["Total Trackers", data.get("total_trackers", "N/A")],
+        ["Trackers", data.get("trackers", "N/A")],
+    ]
+
+    basic_info = tabulate(additional_info, headers=["Key", "Value"], tablefmt="fancy_grid")
+    sec_info = tabulate(table_data, headers=headers, tablefmt="fancy_grid")
+
+    return [basic_info, sec_info]
+
+
+def replace_url(text):
+    url_pattern = re.compile(r"https?://[^\s]+")
+    matches = url_pattern.findall(text)
+
+    for match in matches:
+        text = text.replace(match, hyp_link(match))
+    return text
+
+
+def colorize_score(score):
+    if score < 40:
+        color = "\033[91m"  # Red
+    elif 41 <= score <= 69:
+        color = "\033[93m"  # Yellow
+    else:
+        color = "\033[92m"  # Green
+
+    reset = "\033[0m"
+    return f"{color}{score}{reset}"
+
+
+def hyp_link(uri, label=None):
+    if label is None:
+        label = uri
+    parameters = ''
+
+    # OSC 8 ; params ; URI ST <name> OSC 8 ;; ST
+    escape_mask = '\033]8;{};{}\033\\{}\033]8;;\033\\'
+
+    return escape_mask.format(parameters, uri, label)
