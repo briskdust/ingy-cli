@@ -1,9 +1,4 @@
-"""
-MOBSF REST API Python Requests
-"""
-
 import json
-import re
 
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -12,44 +7,107 @@ import textwrap
 
 SERVER = "http://127.0.0.1:8000"
 
-FILE1 = 'Ingy.apk'
-APIKEY = "d55fdfbd2721715bc6e936e634de823976bcb2a647a69331d1b5eed68ab7bbec"
 
-
-def upload(x, api_key):
+def upload(x, apikey):
     """Upload File"""
-    print("Uploading file")
+    print(f"Uploading file {x}")
     multipart_data = MultipartEncoder(fields={'file': (x, open(x, 'rb'), 'application/octet-stream')})
-    headers = {'Content-Type': multipart_data.content_type, 'Authorization': api_key}
+    headers = {'Content-Type': multipart_data.content_type, 'Authorization': apikey}
     response = requests.post(SERVER + '/api/v1/upload', data=multipart_data, headers=headers)
     print(response.text)
+
     return response.text
 
 
-def scan(data, api_key):
+def scan(data, apikey):
     """Scan the file"""
     print("Scanning file")
     post_dict = json.loads(data)
-    headers = {'Authorization': api_key}
-    response = requests.post(SERVER + '/api/v1/scan', data=post_dict, headers=headers)
-    print(response.text)
+    headers = {'Authorization': apikey}
+    requests.post(SERVER + '/api/v1/scan', data=post_dict, headers=headers)
 
 
-def pdf(data, api_key, output_location):
+def json_resp(data, apikey):
+    """Generate JSON Report"""
+    headers = {'Authorization': apikey}
+    data = {"hash": json.loads(data)["hash"]}
+    response = requests.post(SERVER + '/api/v1/report_json', data=data, headers=headers)
+
+    return response.text
+
+
+def gen_pdf(data, apikey, output_location):
     """Generate PDF Report"""
     print("Generate PDF report")
-    headers = {'Authorization': api_key}
+    headers = {'Authorization': apikey}
     data = {"hash": json.loads(data)["hash"]}
     response = requests.post(SERVER + '/api/v1/download_pdf', data=data, headers=headers, stream=True)
     with open(output_location, 'wb') as flip:
         for chunk in response.iter_content(chunk_size=1024):
             if chunk:
                 flip.write(chunk)
-    print("Report saved as report.pdf")
+    print(f"Report saved to {output_location}")
 
 
-json_data = """{"title": "Compare report", "version": "v3.9.8 Beta", "first_app": {"name_ver": "com.ingy - 2.0.5", "md5": "4862f7d84e28c14fed928d15f6ec65f0", "file_name": "Ingy-old.apk", "size": "7.4MB", "icon_path": "4862f7d84e28c14fed928d15f6ec65f0-icon.png", "activities": ["com.ingy.MainActivity", "com.ingy.IngyNfcManager"], "services": [], "providers": ["org.apache.cordova.camera.FileProvider", "nl.xservices.plugins.FileProvider"], "receivers": ["nl.xservices.plugins.ShareChooserPendingIntent"], "exported_count": {"exported_activities": 1, "exported_services": 0, "exported_receivers": 1, "exported_providers": 0}, "apkid": {"classes.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "anti_vm": ["Build.FINGERPRINT check", "Build.MODEL check", "Build.MANUFACTURER check"], "compiler": ["unknown (please file detection issue!)"]}, "classes10.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "compiler": ["unknown (please file detection issue!)"]}, "classes11.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "compiler": ["unknown (please file detection issue!)"]}, "classes2.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "compiler": ["unknown (please file detection issue!)"]}, "classes3.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "anti_debug": ["Debug.isDebuggerConnected() check"], "compiler": ["unknown (please file detection issue!)"]}, "classes4.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "compiler": ["unknown (please file detection issue!)"]}, "classes5.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "compiler": ["unknown (please file detection issue!)"]}, "classes6.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "compiler": ["unknown (please file detection issue!)"]}, "classes7.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "compiler": ["unknown (please file detection issue!)"]}, "classes8.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "compiler": ["unknown (please file detection issue!)"]}, "classes9.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "compiler": ["unknown (please file detection issue!)"]}}, "cert_subject": "Subject: CN=Android Debug, O=Android, C=US"}, "second_app": {"name_ver": "com.ingy - 2.0.6", "md5": "420790796f66b07d7a815085b075770d", "file_name": "Ingy.apk", "size": "10.43MB", "icon_path": "420790796f66b07d7a815085b075770d-icon.png", "activities": ["com.ingy.MainActivity", "com.ingy.IngyNfcManager"], "services": [], "providers": ["org.apache.cordova.camera.FileProvider", "nl.xservices.plugins.FileProvider", "androidx.startup.InitializationProvider"], "receivers": ["nl.xservices.plugins.ShareChooserPendingIntent"], "exported_count": {"exported_activities": 1, "exported_services": 0, "exported_receivers": 1, "exported_providers": 0}, "apkid": {"classes.dex": {"yara_issue": ["yara issue - dex file recognized by apkid but not yara module"], "anti_vm": ["Build.FINGERPRINT check", "Build.MANUFACTURER check"], "anti_debug": ["Debug.isDebuggerConnected() check"], "compiler": ["unknown (please file detection issue!)"]}}, "cert_subject": "Subject: C=US, ST=California, L=Mountain View, O=Google Inc., OU=Android, CN=Android"}, "urls": {"common": ["data:image/", "https://api.whatsapp.com/send?phone="], "only_first": [], "only_second": []}, "android_api": {"common": [["api_ipc", {"files": {"com/ingy/IngyNfcManager.java": "4,5,6,59,59,79,79,208,208,209,210,226,226,228,228,228,230,230,232", "com/ingy/MainActivity.java": "10", "com/ingy/sdk/IngyAndroidSdk.java": "4,109,109,109,110,117,284,284", "nl/xservices/plugins/ShareChooserPendingIntent.java": "5,7,11", "nl/xservices/plugins/SocialSharing.java": "3,7,9,87,93,96,99,107,112,114,124,127,133,140,140,141,144,149,149,190,191,191,196,196,198,198,198,198,199,199,199,225,228,229,232,274,274,274,275,275,275,275,276,276,276,276,277,287,295,297,301,304,310,316,318,321,330,336,337,341,363,363,365,365,365,365,365,367,367,367,368,368,368,370,400,400,404,563,563,585,591,593,596,638,638,640,640,659,674,674"}, "metadata": {"description": "Inter Process Communication", "severity": "info"}}], ["api_get_system_service", {"files": {"nl/xservices/plugins/SocialSharing.java": "384"}, "metadata": {"description": "Get System Service", "severity": "info"}}], ["api_start_activity", {"files": {"com/ingy/sdk/IngyAndroidSdk.java": "110,286", "nl/xservices/plugins/SocialSharing.java": "203,341,370,571,615"}, "metadata": {"description": "Starting Activity", "severity": "info"}}], ["api_local_file_io", {"files": {"com/ingy/IngyNfcManager.java": "12,13", "nl/xservices/plugins/SocialSharing.java": "216,22,23,23,24,24,25,25,26,26,27,179,288,689,726,727"}, "metadata": {"description": "Local File I/O Operations", "severity": "info"}}], ["api_clipboard", {"files": {"nl/xservices/plugins/SocialSharing.java": "5,5"}, "metadata": {"description": "Set or Read Clipboard data", "severity": "info"}}], ["api_base64_encode", {"files": {"nl/xservices/plugins/SocialSharing.java": "565,17"}, "metadata": {"description": "Base64 Encode", "severity": "info"}}], ["api_installed", {"files": {"nl/xservices/plugins/SocialSharing.java": "141,190,196,639,141"}, "metadata": {"description": "Get Installed Applications", "severity": "info"}}], ["api_crypto", {"files": {"com/ingy/sdk/IngyBleTransport.java": "195,32,33,34,35,36,37"}, "metadata": {"description": "Crypto", "severity": "info"}}]], "only_first": [], "only_second": []}, "permissions": {"common": [["android.permission.INTERNET", {"status": "normal", "info": "full Internet access", "description": "Allows an application to create network sockets."}], ["android.permission.BLUETOOTH", {"status": "normal", "info": "create Bluetooth connections", "description": "Allows applications to connect to paired bluetooth devices."}], ["android.permission.BLUETOOTH_ADMIN", {"status": "normal", "info": "bluetooth administration", "description": "Allows applications to discover and pair bluetooth devices."}], ["android.permission.ACCESS_FINE_LOCATION", {"status": "dangerous", "info": "fine (GPS) location", "description": "Access fine location sources, such as the Global Positioning System on the phone, where available. Malicious applications can use this to determine where you are and may consume additional battery power."}], ["android.permission.NFC", {"status": "normal", "info": "control Near-Field Communication", "description": "Allows an application to communicate with Near-Field Communication (NFC) tags, cards and readers."}], ["android.permission.WRITE_EXTERNAL_STORAGE", {"status": "dangerous", "info": "read/modify/delete external storage contents", "description": "Allows an application to write to external storage."}], ["android.permission.ACCESS_NETWORK_STATE", {"status": "normal", "info": "view network status", "description": "Allows an application to view the status of all networks."}]], "only_first": [], "only_second": [["android.permission.ACCESS_COARSE_LOCATION", {"status": "dangerous", "info": "coarse (network-based) location", "description": "Access coarse location sources, such as the mobile network database, to determine an approximate phone location, where available. Malicious applications can use this to determine approximately where you are."}], ["android.permission.BLUETOOTH_SCAN", {"status": "dangerous", "info": "required for discovering and pairing Bluetooth devices.", "description": "Required to be able to discover and pair nearby Bluetooth devices."}], ["android.permission.BLUETOOTH_ADVERTISE", {"status": "dangerous", "info": "required to advertise to nearby Bluetooth devices.", "description": "Required to be able to advertise to nearby Bluetooth devices."}], ["android.permission.BLUETOOTH_CONNECT", {"status": "dangerous", "info": "necessary for connecting to paired Bluetooth devices.", "description": "Required to be able to connect to paired Bluetooth devices."}], ["android.permission.READ_MEDIA_IMAGES", {"status": "dangerous", "info": "allows reading image files from external storage.", "description": "Allows an application to read image files from external storage."}], ["android.permission.READ_MEDIA_VIDEO", {"status": "dangerous", "info": "allows reading video files from external storage.", "description": "Allows an application to read video files from external storage."}], ["com.ingy.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION", {"status": "unknown", "info": "Unknown permission", "description": "Unknown permission from android reference"}]]}, "browsable_activities": {"common": [], "only_first": [], "only_second": []}, "common_browsable_activities": {}, "apkid": {"common": {"anti_vm": ["Build.MANUFACTURER check", "Build.FINGERPRINT check"], "compiler": ["unknown (please file detection issue!)"], "obfuscator": [], "packer": [], "dropper": [], "manipulator": [], "anti_disassembly": [], "anti_debug": ["Debug.isDebuggerConnected() check"], "abnormal": []}, "only_first": {"anti_vm": ["Build.MODEL check"], "compiler": [], "obfuscator": [], "packer": [], "dropper": [], "manipulator": [], "anti_disassembly": [], "anti_debug": [], "abnormal": []}, "only_second": {"anti_vm": [], "compiler": [], "obfuscator": [], "packer": [], "dropper": [], "manipulator": [], "anti_disassembly": [], "anti_debug": [], "abnormal": []}}, "apkid_error": false}
-"""
+def compare(hash1, hash2, apikey):
+    headers = {'Authorization': apikey}
+    data = {"hash1": hash1, "hash2": hash2}
+    print("in comparinsg data is ", data)
+    response = requests.post(SERVER + '/api/v1/compare', data=data, headers=headers)
+
+    return response.text
+
+
+def format_nested_dict(d, indent=0):
+    """ Recursively format nested dictionaries into a string with indented JSON-like format for better readability """
+    items = []
+    for key, value in d.items():
+        if isinstance(value, dict):
+            items.append(f"{' ' * indent}{key}:")
+            items.append(format_nested_dict(value, indent + 4))
+        elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
+            items.append(f"{' ' * indent}{key}: [{', '.join(format_nested_dict(i, indent + 4) for i in value)}]")
+        else:
+            formatted_value = json.dumps(value, indent=indent + 4) if isinstance(value, list) else value
+            items.append(f"{' ' * indent}{key}: {formatted_value}")
+    return "\n".join(items)
+
+
+def gen_table(json_dict):
+    # Extracting top-level keys and values, formatting if values are complex
+    table_data = []
+    crucial_keys = ["title", "file_name", "app_name", "size", "exported_activities", "browsable_activities",
+                    "providers", "version_name", "version_code", "permissions", "malware_permissions",
+                    "certificate_analysis", "manifest_analysis", "network_security", "binary_analysis", "file_analysis",
+                    "code_analysis", "niap_analysis", "permission_mapping", "secrets", "average_cvss", "appsec",
+                    "trackers", "virus_total", "timestamp"]
+    for key, value in json_dict.items():
+        if key not in crucial_keys:
+            continue
+        if key == "appsec":
+            check_list = value
+            continue
+        if isinstance(value, dict):
+            formatted_value = format_nested_dict(value)
+        elif isinstance(value, list):
+            formatted_value = json.dumps(value, indent=4)
+        else:
+            formatted_value = value
+        table_data.append([key, formatted_value])
+
+    return check_list, table_data
+
+
+def wrap_text(text, width=120):
+    """
+    Wrap text to the specified width using textwrap library,
+    handling None values and preserving original new lines.
+    """
+    if text is None:
+        return None
+
+    wrapped_lines = [textwrap.fill(part, width) for part in text.split('\n')]
+    return '\n'.join(wrapped_lines)
 
 
 def prettify_json(data):
@@ -96,10 +154,6 @@ def prettify_json(data):
     if only_second_apis:
         print("\nAPI Usage (Only Second App):")
         print(tabulate(only_second_apis, headers=["API Feature", "Files"], tablefmt="grid"))
-
-
-# Run the function with the provided JSON data
-# prettify_json(json_data)
 
 
 def remove_keys(data, keys):
@@ -183,15 +237,6 @@ def process_json(json_str):
     sec_info = tabulate(table_data, headers=headers, tablefmt="fancy_grid")
 
     return [basic_info, sec_info]
-
-
-def replace_url(text):
-    url_pattern = re.compile(r"https?://[^\s]+")
-    matches = url_pattern.findall(text)
-
-    for match in matches:
-        text = text.replace(match, hyp_link(match))
-    return text
 
 
 def colorize_score(score):
