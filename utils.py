@@ -83,10 +83,14 @@ def format_nested_dict(d, indent=0):
 def gen_table(json_dict):
     # Extracting top-level keys and values, formatting if values are complex
     table_data = []
-    crucial_keys = ["title", "file_name", "app_name", "size", "exported_activities", "browsable_activities",
-                    "providers", "version_name", "version_code", "permissions", "malware_permissions",
-                    "certificate_analysis", "manifest_analysis", "network_security", "binary_analysis", "file_analysis",
-                    "code_analysis", "niap_analysis", "permission_mapping", "secrets", "average_cvss", "appsec",
+    crucial_keys = ["title", "file_name", "app_name", "size",
+                    "exported_activities", "browsable_activities",
+                    "providers", "version_name", "version_code",
+                    "permissions", "malware_permissions",
+                    "certificate_analysis", "manifest_analysis",
+                    "network_security", "binary_analysis", "file_analysis",
+                    "code_analysis", "niap_analysis", "permission_mapping",
+                    "secrets", "average_cvss", "appsec",
                     "trackers", "virus_total", "timestamp"]
     for key, value in json_dict.items():
         if key not in crucial_keys:
@@ -129,14 +133,20 @@ def prettify_json(data):
     }
 
     # Permissions detailed view
-    common_permissions = [[perm[0], perm[1]['info']] for perm in json_dict["permissions"]["common"]]
-    only_first_permissions = [[perm[0], perm[1]['info']] for perm in json_dict["permissions"]["only_first"]]
-    only_second_permissions = [[perm[0], perm[1]['info']] for perm in json_dict["permissions"]["only_second"]]
+    common_permissions = [[perm[0], perm[1]['info']]
+                          for perm in json_dict["permissions"]["common"]]
+    only_first_permissions = [[perm[0], perm[1]['info']]
+                              for perm in json_dict["permissions"]["only_first"]]
+    only_second_permissions = [[perm[0], perm[1]['info']]
+                               for perm in json_dict["permissions"]["only_second"]]
 
     # APIs used
-    common_apis = [[api[0], ", ".join(api[1]['files'].keys())] for api in json_dict["android_api"]["common"]]
-    only_first_apis = [[api[0], ", ".join(api[1]['files'].keys())] for api in json_dict["android_api"]["only_first"]]
-    only_second_apis = [[api[0], ", ".join(api[1]['files'].keys())] for api in json_dict["android_api"]["only_second"]]
+    common_apis = [[api[0], ", ".join(api[1]['files'].keys())]
+                   for api in json_dict["android_api"]["common"]]
+    only_first_apis = [[api[0], ", ".join(api[1]['files'].keys())]
+                       for api in json_dict["android_api"]["only_first"]]
+    only_second_apis = [[api[0], ", ".join(api[1]['files'].keys())]
+                        for api in json_dict["android_api"]["only_second"]]
 
     # Display basic info
     print("App Comparison:")
@@ -177,10 +187,12 @@ def remove_non_security_related_keys(data):
 
     # List of security-related keys to remove
     security_keys = [
-        "version", "title", "file_name", "app_name", "size", "exported_activities", "browsable_activities",
+        "version", "title", "file_name", "app_name",
+        "size", "exported_activities", "browsable_activities",
         "providers", "version_name", "version_code",
         "permissions", "malware_permissions", "certificate_analysis",
-        "manifest_analysis", "network_security", "binary_analysis", "file_analysis", "code_analysis", "niap_analysis",
+        "manifest_analysis", "network_security", "binary_analysis",
+        "file_analysis", "code_analysis", "niap_analysis",
         "permission_mapping", "secrets", "average_cvss", "appsec",
         "trackers", "virus_total", "timestamp"
     ]
@@ -227,7 +239,8 @@ def process_json(json_str):
                 wrapped_description = wrap_section(item["description"])
                 wrapped_section = wrap_section(item["section"])
 
-                table_data.append([severity_text, wrapped_title, wrapped_description, wrapped_section])
+                table_data.append([severity_text, wrapped_title,
+                                   wrapped_description, wrapped_section])
 
     # Add additional information
     additional_info = [
