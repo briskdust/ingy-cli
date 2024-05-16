@@ -3,8 +3,6 @@ from utils import *
 from tabulate import tabulate
 import click
 
-SERVER = "http://127.0.0.1:8000"
-
 
 @click.group()
 def main():
