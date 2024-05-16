@@ -11,7 +11,8 @@ SERVER = "http://127.0.0.1:8000"
 def upload(x, apikey):
     """Upload File"""
     print(f"Uploading file {x}")
-    multipart_data = MultipartEncoder(fields={'file': (x, open(x, 'rb'), 'application/octet-stream')})
+    multipart_data = MultipartEncoder(fields={'file': (x, open(x, 'rb'),
+                                                       'application/octet-stream')})
     headers = {'Content-Type': multipart_data.content_type, 'Authorization': apikey}
     response = requests.post(SERVER + '/api/v1/upload', data=multipart_data, headers=headers)
     print(response.text)
@@ -41,7 +42,8 @@ def gen_pdf(data, apikey, output_location):
     print("Generate PDF report")
     headers = {'Authorization': apikey}
     data = {"hash": json.loads(data)["hash"]}
-    response = requests.post(SERVER + '/api/v1/download_pdf', data=data, headers=headers, stream=True)
+    response = requests.post(SERVER + '/api/v1/download_pdf',
+                             data=data, headers=headers, stream=True)
     with open(output_location, 'wb') as flip:
         for chunk in response.iter_content(chunk_size=1024):
             if chunk:
@@ -52,7 +54,7 @@ def gen_pdf(data, apikey, output_location):
 def compare(hash1, hash2, apikey):
     headers = {'Authorization': apikey}
     data = {"hash1": hash1, "hash2": hash2}
-    print("in comparinsg data is ", data)
+    print("in comparison data is ", data)
     response = requests.post(SERVER + '/api/v1/compare', data=data, headers=headers)
 
     return response.text
