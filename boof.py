@@ -1,4 +1,8 @@
-from boofuzz import *
+"""Boofuzz script to fuzz the login page of the gateway configuration dashboard."""
+
+from boofuzz import (Session, Target, SocketConnection, s_initialize, s_block, s_string, s_delim,
+                     s_group, s_size, s_static, s_get)
+
 
 def main():
     # Target configuration
@@ -48,6 +52,7 @@ def main():
     # Connect and start fuzzing
     session.connect(s_get("User Login"))
     session.fuzz()
+
 
 if __name__ == "__main__":
     main()
