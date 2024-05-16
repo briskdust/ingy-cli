@@ -61,16 +61,21 @@ def compare(hash1, hash2, apikey):
 
 
 def format_nested_dict(d, indent=0):
-    """ Recursively format nested dictionaries into a string with indented JSON-like format for better readability """
+    """
+    Recursively format nested dictionaries into a string
+    with indented JSON-like format for better readability
+    """
     items = []
     for key, value in d.items():
         if isinstance(value, dict):
             items.append(f"{' ' * indent}{key}:")
             items.append(format_nested_dict(value, indent + 4))
         elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
-            items.append(f"{' ' * indent}{key}: [{', '.join(format_nested_dict(i, indent + 4) for i in value)}]")
+            items.append(f"{' ' * indent}{key}: [{', '.
+                         join(format_nested_dict(i, indent + 4) for i in value)}]")
         else:
-            formatted_value = json.dumps(value, indent=indent + 4) if isinstance(value, list) else value
+            formatted_value = json.dumps(value, indent=indent + 4)\
+                if isinstance(value, list) else value
             items.append(f"{' ' * indent}{key}: {formatted_value}")
     return "\n".join(items)
 
