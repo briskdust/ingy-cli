@@ -197,7 +197,7 @@ def process_json(json_str):
     def colorize_text(text, color_code):
         return f"\033[{color_code}m{text}\033[0m"
 
-    def wrap_text(text, width=60):
+    def wrap_section(text, width=60):
         return textwrap.TextWrapper(width=width, break_long_words=False, break_on_hyphens=False,
                                     replace_whitespace=False).fill(text)
 
@@ -216,9 +216,9 @@ def process_json(json_str):
                 elif severity == "hotspot":
                     severity_text = colorize_text("HOTSPOT", "95")  # Magenta
 
-                wrapped_title = wrap_text(item["title"])
-                wrapped_description = wrap_text(item["description"])
-                wrapped_section = wrap_text(item["section"])
+                wrapped_title = wrap_section(item["title"])
+                wrapped_description = wrap_section(item["description"])
+                wrapped_section = wrap_section(item["section"])
 
                 table_data.append([severity_text, wrapped_title, wrapped_description, wrapped_section])
 
@@ -249,14 +249,3 @@ def colorize_score(score):
 
     reset = "\033[0m"
     return f"{color}{score}{reset}"
-
-
-def hyp_link(uri, label=None):
-    if label is None:
-        label = uri
-    parameters = ''
-
-    # OSC 8 ; params ; URI ST <name> OSC 8 ;; ST
-    escape_mask = '\033]8;{};{}\033\\{}\033]8;;\033\\'
-
-    return escape_mask.format(parameters, uri, label)
