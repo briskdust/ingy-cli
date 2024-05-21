@@ -1,26 +1,52 @@
+"""
+This script is a CLI tool that allows users to scan
+APK files and Docker images for security vulnerabilities
+using MobSF and Trivy
+"""
+
 import subprocess
-from utils import *
+import json
+
+from utils import (
+    upload,
+    scan,
+    json_resp,
+    gen_pdf,
+    compare,
+    remove_non_security_related_keys,
+    gen_table,
+    process_json,
+    wrap_text,
+    prettify_json,
+)
 from tabulate import tabulate
 import click
 
 
 @click.group()
 def main():
+    """
+    CLI tool for scanning APK files and
+    Docker images for security vulnerabilities.
+    """
     pass
 
 
 @main.group()
 def cloud():
+    """Commands for scanning Docker images for security vulnerabilities."""
     pass
 
 
 @main.group()
 def mobile():
+    """Commands for scanning APK files for security vulnerabilities."""
     pass
 
 
 @main.group()
 def gateway():
+    """Commands for scanning API endpoints for security vulnerabilities."""
     pass
 
 
