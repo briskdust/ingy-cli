@@ -15,13 +15,14 @@ SERVER = "http://127.0.0.1:8000"
 def upload(x, apikey):
     """Upload File"""
     print(f"Uploading file {x}")
-    multipart_data = MultipartEncoder(fields={'file': (x, open(x, 'rb'),
-                                                       'application/octet-stream')})
-    headers = {'Content-Type': multipart_data.content_type, 'Authorization': apikey}
-    response = requests.post(SERVER + '/api/v1/upload', data=multipart_data, headers=headers, timeout=10)
-    print(response.text)
+    with open(x, 'rb') as file:
+        multipart_data = MultipartEncoder(fields={'file': (x, file, 'application/octet-stream')})
+        headers = {'Content-Type': multipart_data.content_type, 'Authorization': apikey}
+        response = requests.post(SERVER + '/api/v1/upload', data=multipart_data,
+                             headers=headers, timeout=10)
+        print(response.text)
 
-    return response.text
+        return response.text
 
 
 def scan(data, apikey):
@@ -56,6 +57,7 @@ def gen_pdf(data, apikey, output_location):
 
 
 def compare(hash1, hash2, apikey):
+    """Compare two apk files"""
     headers = {'Authorization': apikey}
     data = {"hash1": hash1, "hash2": hash2}
     print("in comparison data is ", data)
@@ -85,6 +87,7 @@ def format_nested_dict(d, indent=0):
 
 
 def gen_table(json_dict):
+    """Generate a table from the JSON report data"""
     # Extracting top-level keys and values, formatting if values are complex
     table_data = []
     crucial_keys = ["title", "file_name", "app_name", "size",
@@ -126,6 +129,7 @@ def wrap_text(text, width=120):
 
 
 def prettify_json(data):
+    """Prettify JSON data for better readability"""
     json_dict = json.loads(data)
 
     # Extracting and organizing data into sections for presentation
@@ -178,6 +182,7 @@ def prettify_json(data):
 
 
 def remove_keys(data, keys):
+    """Remove unnecessary keys from JSON data"""
     json_dict = json.loads(data)
     for key in keys:
         if key in json_dict:
@@ -186,6 +191,7 @@ def remove_keys(data, keys):
 
 
 def remove_non_security_related_keys(data):
+    """Remove non-security related keys from the JSON data"""
     # Convert JSON string to dictionary
     data_dict = json.loads(data)
 
@@ -209,6 +215,7 @@ def remove_non_security_related_keys(data):
 
 
 def process_json(json_str):
+    """Process JSON data and generate two lists of data"""
     data = json_str
 
     table_data = []
@@ -264,6 +271,7 @@ def process_json(json_str):
 
 
 def colorize_score(score):
+    """Colorize the security score based on the value"""
     if score < 40:
         color = "\033[91m"  # Red
     elif 41 <= score <= 69:
