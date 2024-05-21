@@ -7,6 +7,9 @@ using MobSF and Trivy
 import subprocess
 import json
 
+from tabulate import tabulate
+import click
+
 from utils import (
     upload,
     scan,
@@ -19,8 +22,6 @@ from utils import (
     wrap_text,
     prettify_json,
 )
-from tabulate import tabulate
-import click
 
 
 @click.group()
@@ -29,7 +30,6 @@ def main():
     CLI tool for scanning APK files and
     Docker images for security vulnerabilities.
     """
-    pass
 
 
 @main.group()
@@ -61,7 +61,7 @@ def mobsf(files, apikey, pdf):
             files = [file1, file2]
         else:
             files = [file1]
-    """Process files and generate reports."""
+    # Process files and generate reports
     responses = [upload(file, apikey) for file in files]
 
     scan(responses[0], apikey)
