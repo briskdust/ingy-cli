@@ -1,3 +1,7 @@
+"""
+Contains utility functions for interacting with the MOBSF API
+"""
+
 import json
 
 import requests
@@ -14,7 +18,7 @@ def upload(x, apikey):
     multipart_data = MultipartEncoder(fields={'file': (x, open(x, 'rb'),
                                                        'application/octet-stream')})
     headers = {'Content-Type': multipart_data.content_type, 'Authorization': apikey}
-    response = requests.post(SERVER + '/api/v1/upload', data=multipart_data, headers=headers)
+    response = requests.post(SERVER + '/api/v1/upload', data=multipart_data, headers=headers, timeout=10)
     print(response.text)
 
     return response.text
@@ -25,14 +29,14 @@ def scan(data, apikey):
     print("Scanning file")
     post_dict = json.loads(data)
     headers = {'Authorization': apikey}
-    requests.post(SERVER + '/api/v1/scan', data=post_dict, headers=headers)
+    requests.post(SERVER + '/api/v1/scan', data=post_dict, headers=headers, timeout=600)
 
 
 def json_resp(data, apikey):
     """Generate JSON Report"""
     headers = {'Authorization': apikey}
     data = {"hash": json.loads(data)["hash"]}
-    response = requests.post(SERVER + '/api/v1/report_json', data=data, headers=headers)
+    response = requests.post(SERVER + '/api/v1/report_json', data=data, headers=headers, timeout=10)
 
     return response.text
 
@@ -43,7 +47,7 @@ def gen_pdf(data, apikey, output_location):
     headers = {'Authorization': apikey}
     data = {"hash": json.loads(data)["hash"]}
     response = requests.post(SERVER + '/api/v1/download_pdf',
-                             data=data, headers=headers, stream=True)
+                             data=data, headers=headers, stream=True, timeout=20)
     with open(output_location, 'wb') as flip:
         for chunk in response.iter_content(chunk_size=1024):
             if chunk:
@@ -55,7 +59,7 @@ def compare(hash1, hash2, apikey):
     headers = {'Authorization': apikey}
     data = {"hash1": hash1, "hash2": hash2}
     print("in comparison data is ", data)
-    response = requests.post(SERVER + '/api/v1/compare', data=data, headers=headers)
+    response = requests.post(SERVER + '/api/v1/compare', data=data, headers=headers, timeout=20)
 
     return response.text
 
