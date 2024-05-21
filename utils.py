@@ -3,11 +3,11 @@ Contains utility functions for interacting with the MOBSF API
 """
 
 import json
+import textwrap
 
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from tabulate import tabulate
-import textwrap
 
 SERVER = "http://127.0.0.1:8000"
 
@@ -89,6 +89,7 @@ def format_nested_dict(d, indent=0):
 def gen_table(json_dict):
     """Generate a table from the JSON report data"""
     # Extracting top-level keys and values, formatting if values are complex
+    check_list = []
     table_data = []
     crucial_keys = ["title", "file_name", "app_name", "size",
                     "exported_activities", "browsable_activities",
@@ -222,6 +223,7 @@ def process_json(json_str):
 
     # Define table headers
     headers = ["Severity", "Title", "Description", "Section"]
+    severity_text = ""
 
     # Define a function to colorize text
     def colorize_text(text, color_code):
