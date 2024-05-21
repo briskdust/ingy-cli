@@ -67,8 +67,7 @@ def mobsf(files, apikey, pdf):
     scan(responses[0], apikey)
 
     if not pdf:
-        rep_json = json_resp(responses[0], apikey)
-        new_rep_json = remove_non_security_related_keys(rep_json)
+        new_rep_json = remove_non_security_related_keys(json_resp(responses[0], apikey))
         j_dict = json.loads(new_rep_json)
 
         check_list, table_data = gen_table(j_dict)
