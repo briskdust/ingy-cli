@@ -1,4 +1,15 @@
-from boofuzz import *
+from boofuzz import (
+    Session,
+    Target,
+    SocketConnection,
+    s_initialize,
+    s_block,
+    s_string,
+    s_delim,
+    s_static,
+    s_size,
+    s_get
+)
 
 
 def main():
