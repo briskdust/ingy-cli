@@ -35,19 +35,16 @@ def main():
 @main.group()
 def cloud():
     """Commands for scanning Docker images for security vulnerabilities."""
-    pass
 
 
 @main.group()
 def mobile():
     """Commands for scanning APK files for security vulnerabilities."""
-    pass
 
 
 @main.group()
 def gateway():
     """Commands for scanning API endpoints for security vulnerabilities."""
-    pass
 
 
 # ------------------------------- MOBSF Command -------------------------------
