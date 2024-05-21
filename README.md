@@ -107,4 +107,3 @@ python cli_tool.py cloud trivy --name docker/image:latest
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-```
