@@ -75,7 +75,7 @@ def mobsf(files, apikey, pdf):
         check_lst = process_json(check_list)
         print(check_lst[0])
         print(check_lst[1])
-        print(tabulate(wrapped_data, headers=["Key", "Value"], tablefmt="grid"))
+        print(tabulate(wrapped_data, headers=["Key", "Value"], tablefmt="fancy_grid"))
     else:
         gen_pdf(responses[0], apikey, pdf)
 
@@ -90,7 +90,7 @@ def mobsf(files, apikey, pdf):
             print(check_lst_2[0])
             print(check_lst_2[1])
             wrapped_data_2 = [[item[0], wrap_text(item[1], width=150)] for item in table_data_2]
-            print(tabulate(wrapped_data_2, headers=["Key", "Value"], tablefmt="grid"))
+            print(tabulate(wrapped_data_2, headers=["Key", "Value"], tablefmt="fancy_grid"))
 
             hash1 = json.loads(responses[0])["hash"]
             hash2 = json.loads(responses[1])["hash"]

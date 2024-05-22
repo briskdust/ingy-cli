@@ -230,7 +230,7 @@ def process_json(json_str):
         return f"\033[{color_code}m{text}\033[0m"
 
     def wrap_section(text, width=60):
-        return textwrap.TextWrapper(width=width, break_long_words=False, break_on_hyphens=False,
+        return textwrap.TextWrapper(width=width, break_long_words=False, break_on_hyphens=True,
                                     replace_whitespace=False).fill(text)
 
     # Deal with each severity level
