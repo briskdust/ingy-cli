@@ -3,6 +3,7 @@ Contains utility functions for interacting with the MOBSF API
 """
 
 import json
+import os
 import textwrap
 
 import requests
@@ -15,6 +16,9 @@ SERVER = "http://127.0.0.1:8000"
 def upload(x, apikey):
     """Upload File"""
     print(f"Uploading file {x}")
+    if not os.path.exists(x):
+        print(f"File {x} does not exist")
+        return "File not found"
     with open(x, 'rb') as file:
         multipart_data = MultipartEncoder(fields={'file': (x, file, 'application/octet-stream')})
         headers = {'Content-Type': multipart_data.content_type, 'Authorization': apikey}
@@ -203,7 +207,7 @@ def remove_non_security_related_keys(data):
         "providers", "version_name", "version_code",
         "permissions", "malware_permissions", "certificate_analysis",
         "manifest_analysis", "network_security", "binary_analysis",
-        "file_analysis", "code_analysis", "niap_analysis",
+        "file_analysis", "niap_analysis",
         "permission_mapping", "secrets", "average_cvss", "appsec",
         "trackers", "virus_total", "timestamp"
     ]
@@ -211,6 +215,7 @@ def remove_non_security_related_keys(data):
     # Iterate over the keys and remove them if they exist in the dictionary
     filtered_dict = {key: data_dict[key] for key in security_keys if key in data_dict}
 
+    print(json.dumps(filtered_dict, indent=4))
     # Return the modified data as a JSON string
     return json.dumps(filtered_dict, indent=4)
 
@@ -234,7 +239,7 @@ def process_json(json_str):
                                     replace_whitespace=False).fill(text)
 
     # Deal with each severity level
-    for severity in ["high", "warning", "info", "secure", "hotspot"]:
+    for severity in ["high", "warning", "info", "secure"]:
         if severity in data:
             for item in data[severity]:
                 if severity == "high":

@@ -47,6 +47,11 @@ def gateway():
     """Commands for scanning API endpoints for security vulnerabilities."""
 
 
+@main.group()
+def code():
+    """Commands for scanning code for security vulnerabilities."""
+
+
 # ------------------------------- MOBSF Command -------------------------------
 @mobile.command()
 @click.argument('files', nargs=-1)
@@ -131,6 +136,13 @@ def trivy(name, html):
     except subprocess.CalledProcessError as e:
         click.echo("Trivy scan failed")
         click.echo(f"Details: {str(e)}")
+
+
+@code.command()
+def bandit():
+    """Run Bandit to check Python code for security vulnerabilities."""
+    path = input("Enter the path to the Python code: ")
+    subprocess.run(['bandit', '-c', 'bandit.yaml', '-r', '-ll', path])
 
 
 if __name__ == '__main__':
