@@ -11,11 +11,15 @@ FILE_EXTENSIONS = ['.py', '.sh', '.js']
 
 # Define patterns to identify potential shell escape vulnerabilities
 PATTERNS = {
-    'subprocess_shell': re.compile(r'\bsubprocess\.run\(.+shell=True\b|\bsubprocess\.Popen\(.+shell=True\b'),
+    'subprocess_shell': re.compile(
+        r'\bsubprocess\.run\(.+shell=True\b|\bsubprocess\.Popen\(.+shell=True\b'
+    ),
     'os_system': re.compile(r'\bos\.system\(.+\)'),
     'eval': re.compile(r'\beval\(.+\)'),
     'exec': re.compile(r'\bexec\(.+\)'),
-    'commands': re.compile(r'\bcommands\.getoutput\(.+\)|\bcommands\.getstatusoutput\(.+\)'),
+    'commands': re.compile(
+        r'\bcommands\.getoutput\(.+\)|\bcommands\.getstatusoutput\(.+\)'
+    ),
     # JavaScript patterns
     'child_process_exec': re.compile(r'\bexec\(.+\)'),
     'child_process_execFile': re.compile(r'\bexecFile\(.+\)'),
@@ -28,7 +32,7 @@ def scan_file(file_path):
     """Scan a file for potential shell escape vulnerabilities."""
     if ".venv" in file_path:
         return []
-    with open(file_path, 'r', errors='ignore') as file:
+    with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
         lines = file.readlines()
     findings = []
     for line_num, line in enumerate(lines, 1):
