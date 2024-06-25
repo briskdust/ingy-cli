@@ -25,6 +25,8 @@ from utils import (
 
 from shell_escape_finder import scan_repo, print_report
 
+from initialization import init_mobsf, install_trivy
+
 
 @click.group()
 def main():
@@ -50,6 +52,12 @@ def code():
 
 
 # ------------------------------- MOBSF Command -------------------------------
+@mobile.command()
+def mobsf_init():
+    """Initialize the MobSF Docker container."""
+    init_mobsf()
+
+
 @mobile.command()
 @click.argument('files', nargs=-1)
 @click.option('--apikey', envvar='MOBSF_APIKEY', prompt=True, help='API key for authentication')
@@ -103,7 +111,13 @@ def mobsf(files, apikey, pdf):
             gen_pdf(responses[1], apikey, pdf)
 
 
-# ------------------------------- Cloud Command -------------------------------
+# ------------------------------- Docker Command -------------------------------
+@docker.command()
+def trivy_install():
+    """Install Trivy for scanning Docker images."""
+    install_trivy()
+
+
 @docker.command()
 @click.option('--name', prompt=True, help='Name of the Docker image to scan')
 @click.option("--html", help="Specify the location to the HTML template file")
@@ -135,6 +149,7 @@ def trivy(name, html):
         click.echo(f"Details: {str(e)}")
 
 
+# ------------------------------- Code Command -------------------------------
 @code.command()
 def bandit():
     """Run Bandit to check Python code for security vulnerabilities."""

@@ -1,3 +1,8 @@
+"""
+This script scans a repository for potential shell escape vulnerabilities
+in Python and JavaScript and bash files.
+"""
+
 import os
 import re
 
@@ -20,6 +25,7 @@ PATTERNS = {
 
 
 def scan_file(file_path):
+    """Scan a file for potential shell escape vulnerabilities."""
     if ".venv" in file_path:
         return []
     with open(file_path, 'r', errors='ignore') as file:
@@ -34,6 +40,7 @@ def scan_file(file_path):
 
 
 def scan_repo(repo_path):
+    """Scan a repository for potential shell escape vulnerabilities."""
     vulnerabilities = {}
     for root, _, files in os.walk(repo_path):
         for file in files:
@@ -46,6 +53,7 @@ def scan_repo(repo_path):
 
 
 def print_report(vulnerabilities):
+    """Print the vulnerabilities found in the repository."""
     if not vulnerabilities:
         print("No potential shell escape vulnerabilities found.")
         return
