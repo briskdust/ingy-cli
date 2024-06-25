@@ -277,6 +277,33 @@ def process_json(json_str):
     return [basic_info, sec_info]
 
 
+def process_response(response, apikey, pdf):
+    """Process the response from the MOBSF API and display the results."""
+    scan(response, apikey)
+
+    if not pdf:
+        new_rep_json = remove_non_security_related_keys(json_resp(response, apikey))
+        j_dict = json.loads(new_rep_json)
+
+        check_list, table_data = gen_table(j_dict)
+        wrapped_data = [[item[0], wrap_text(item[1], width=150)] for item in table_data]
+        check_lst = process_json(check_list)
+
+        print(check_lst[0])
+        print(check_lst[1])
+        print(tabulate(wrapped_data, headers=["Key", "Value"], tablefmt="fancy_grid"))
+    else:
+        gen_pdf(response, apikey, pdf)
+
+
+def compare_reports(responses, apikey):
+    """Compare two reports from the MOBSF API and display the results."""
+    hash1 = json.loads(responses[0])["hash"]
+    hash2 = json.loads(responses[1])["hash"]
+    comparison = compare(hash1, hash2, apikey)
+    prettify_json(comparison)
+
+
 def colorize_score(score):
     """Colorize the security score based on the value"""
     if score < 40:
