@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ingy-backend"
+name = "ingysec"
 version = "0.1.0"
 description = ""
 authors = ["briskdust <briskdust@gmail.com>"]
@@ -16,6 +16,8 @@ boofuzz = "^0.4.2"
 semgrep = "^1.75.0"
 bandit = "^1.7.8"
 
+[tool.poetry.scripts]
+ingysec = "ingysec.ingy:main"
 
 [build-system]
 requires = ["poetry-core"]
