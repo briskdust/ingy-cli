@@ -40,6 +40,12 @@ This CLI tool supports multiple commands grouped under `cloud`, `mobile`, and `g
 
 Scan and analyze APK files for security vulnerabilities using MobSF.
 
+#### Initialization
+This command will initialize the MobSF docker container and run it on port 3000. It will also provide the API key for the MobSF server.
+```shell
+ingysec mobile mobsf_init
+```
+
 #### Scan APK Files
 
 ```sh
@@ -54,6 +60,12 @@ python cli_tool.py mobile mobsf --apikey YOUR_API_KEY --pdf output.pdf path/to/f
 
 Run Trivy scan for a Docker image.
 
+#### Installation
+This command will install Trivy on your system. Only run it once, and it only works on **Linux(Debian/Ubuntu)** systems.
+```shell
+ingysec cloud trivy_install
+```
+
 #### Scan Docker Images
 
 ```sh
@@ -63,6 +75,28 @@ python cli_tool.py cloud trivy --name IMAGE_NAME --html template.html
 - `--name`: Name of the Docker image to scan.
 - `--html`: Optional. Path to an HTML template file for generating the report. If not present, the results will be
     displayed in the terminal as a table.
+
+### Code Commands
+Run code inspection and scanning commands to detect security vulnerabilities in Python code.
+
+#### Bandit
+Run Bandit to check Python code for security vulnerabilities.
+
+```sh
+ingysec code bandit
+```
+Prompts the user to enter the path to the Python code.
+Recursively scans all Python files in the specified path using the Bandit configuration file bandit.yaml.
+Sets the severity level to high (-ll) and reports all discovered security issues.
+
+#### Shell Escape
+Scan code for potential shell escape vulnerabilities.
+
+```sh
+ingysec code shell_escape
+```
+Prompts the user to enter the path to the repository.
+Expands ~ to the full home directory path and verifies that the provided path is a directory.
 
 ## Configuration
 
@@ -103,6 +137,34 @@ python cli_tool.py mobile mobsf path/to/file1.apk --apikey YOUR_API_KEY --pdf ou
 ```sh
 python cli_tool.py cloud trivy --name docker/image:latest
 ```
+
+## Extending the Tool
+
+### Adding New Commands
+To implement a new command, create a new command group in `ingysec/ingy.py`:
+```python
+@main.group()
+def example_command():
+"""This is an example command group."""
+    pass
+```
+
+Then, add a new command to the group:
+```python
+@example_command.command()
+def new_command():
+"""This is a new command."""
+    pass
+```
+
+### Adding New Functions
+For the purpose of maintainability and clean code, add new functions to the `utils.py` file.
+
+### Extending `shell_escape_finder.py`
+To extend the script to support more languages, you need to update two main components:
+
+1. **File Extensions**: Add the file extensions of the new languages to the `FILE_EXTENSIONS` list.
+2. **Patterns**: Add regex patterns to identify potential shell escape vulnerabilities in the `PATTERNS` dictionary.
 
 ## License
 
