@@ -55,14 +55,3 @@ def print_report(vulnerabilities):
             print(f"  Line {line_num}: Vulnerability: {vuln_name}")
             for match in matches:
                 print(f"    {match}")
-
-
-if __name__ == '__main__':
-    repo_path = input("Enter the path to the repository: ").strip()
-    repo_path = os.path.expanduser(repo_path)  # Expand the tilde to the full home directory path
-    if not os.path.isdir(repo_path):
-        print("The provided path is not a directory.")
-        exit(1)
-
-    vulnerabilities = scan_repo(repo_path)
-    print_report(vulnerabilities)

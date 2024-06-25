@@ -3,7 +3,7 @@ This script is a CLI tool that allows users to scan
 APK files and Docker images for security vulnerabilities
 using MobSF and Trivy
 """
-
+import os
 import subprocess
 import json
 
@@ -23,6 +23,8 @@ from utils import (
     prettify_json,
 )
 
+from shell_escape_finder import scan_repo, print_report
+
 
 @click.group()
 def main():
@@ -33,18 +35,13 @@ def main():
 
 
 @main.group()
-def cloud():
+def docker():
     """Commands for scanning Docker images for security vulnerabilities."""
 
 
 @main.group()
 def mobile():
     """Commands for scanning APK files for security vulnerabilities."""
-
-
-@main.group()
-def gateway():
-    """Commands for scanning API endpoints for security vulnerabilities."""
 
 
 @main.group()
@@ -107,7 +104,7 @@ def mobsf(files, apikey, pdf):
 
 
 # ------------------------------- Cloud Command -------------------------------
-@cloud.command()
+@docker.command()
 @click.option('--name', prompt=True, help='Name of the Docker image to scan')
 @click.option("--html", help="Specify the location to the HTML template file")
 def trivy(name, html):
@@ -143,6 +140,19 @@ def bandit():
     """Run Bandit to check Python code for security vulnerabilities."""
     path = input("Enter the path to the Python code: ")
     subprocess.run(['bandit', '-c', 'bandit.yaml', '-r', '-ll', path])
+
+
+@code.command()
+def shell_escape():
+    """Scan code for potential shell escape vulnerabilities."""
+    repo_path = input("Enter the path to the repository: ").strip()
+    repo_path = os.path.expanduser(repo_path)  # Expand the tilde to the full home directory path
+    if not os.path.isdir(repo_path):
+        print("The provided path is not a directory.")
+        exit(1)
+
+    vulnerabilities = scan_repo(repo_path)
+    print_report(vulnerabilities)
 
 
 if __name__ == '__main__':
