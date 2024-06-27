@@ -55,7 +55,8 @@ def mobsf_init():
 @mobile.command()
 @click.argument('files', nargs=-1)
 @click.option('--apikey', envvar='MOBSF_APIKEY', prompt=True, help='API key for authentication')
-@click.option('--pdf', help='Generate PDF report, takes an argument of the name of the generated PDF file')
+@click.option('--pdf',
+              help='Generate PDF report, takes an argument of the name of the generated PDF file')
 def mobsf(files, apikey, pdf):
     """Scan and analyze APK files for security vulnerabilities using MobSF."""
     if not files:
@@ -123,7 +124,9 @@ def bandit():
 
 @code.command()
 @click.argument('repo')
-@click.option('--seckey', type=click.Path(exists=True), help='Path to the SSH private key for cloning the repository.')
+@click.option('--seckey',
+              type=click.Path(exists=True),
+              help='Path to the SSH private key for cloning the repository.')
 def shell_escape(repo, seckey):
     """
     Scan a local or remote repository for potential shell escape vulnerabilities.
