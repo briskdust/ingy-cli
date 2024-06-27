@@ -93,11 +93,10 @@ Sets the severity level to high (-ll) and reports all discovered security issues
 Scan code for potential shell escape vulnerabilities.
 
 ```sh
-ingysec code shell_escape
+ingysec code shell-escape
 ```
-Prompts the user to enter the path to the repository.
-Expands ~ to the full home directory path and verifies that the provided path is a directory.
-
+Prompts the user to enter the path to the repository. The user can enter the URL of a remote repository and utilize the
+`--seckey` flag to specify the path to the SSH private key for cloning the repository. Supports shell expansion, such as `~` to the full home directory path and verifies that the provided path is a directory.
 ## Configuration
 
 ### MobSF Configuration

@@ -1,10 +1,12 @@
 """
 This script scans a repository for potential shell escape vulnerabilities
-in Python and JavaScript and bash files.
+in Python, JavaScript, and Bash files.
 """
 
 import os
 import re
+import sys
+import subprocess
 
 # Define file extensions to check
 FILE_EXTENSIONS = ['.py', '.sh', '.js']
@@ -67,3 +69,16 @@ def print_report(vulnerabilities):
             print(f"  Line {line_num}: Vulnerability: {vuln_name}")
             for match in matches:
                 print(f"    {match}")
+
+
+def download_repo(repo_url, dest_path, seckey=None):
+    """Clone a remote git repository to a destination path using an optional SSH key."""
+    env = os.environ.copy()
+    if seckey:
+        env['GIT_SSH_COMMAND'] = f'ssh -i {seckey} -o IdentitiesOnly=yes'
+
+    try:
+        subprocess.run(['git', 'clone', repo_url, dest_path], check=True, env=env)
+    except subprocess.CalledProcessError as e:
+        print(f"Error cloning repository: {e}")
+        sys.exit(1)

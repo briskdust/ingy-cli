@@ -7,6 +7,8 @@ import os
 import subprocess
 import sys
 
+import tempfile
+
 import click
 
 from utils import (
@@ -15,7 +17,7 @@ from utils import (
     compare_reports,
 )
 
-from shell_escape_finder import scan_repo, print_report
+from shell_escape_finder import scan_repo, print_report, download_repo
 
 from initialization import init_mobsf, install_trivy
 
@@ -53,7 +55,7 @@ def mobsf_init():
 @mobile.command()
 @click.argument('files', nargs=-1)
 @click.option('--apikey', envvar='MOBSF_APIKEY', prompt=True, help='API key for authentication')
-@click.option('--pdf', help='Generate PDF report')
+@click.option('--pdf', help='Generate PDF report, takes an argument of the name of the generated PDF file')
 def mobsf(files, apikey, pdf):
     """Scan and analyze APK files for security vulnerabilities using MobSF."""
     if not files:
@@ -120,15 +122,27 @@ def bandit():
 
 
 @code.command()
-def shell_escape():
-    """Scan code for potential shell escape vulnerabilities."""
-    repo_path = input("Enter the path to the repository: ").strip()
-    repo_path = os.path.expanduser(repo_path)  # Expand the tilde to the full home directory path
-    if not os.path.isdir(repo_path):
-        print("The provided path is not a directory.")
-        sys.exit(1)
+@click.argument('repo')
+@click.option('--seckey', type=click.Path(exists=True), help='Path to the SSH private key for cloning the repository.')
+def shell_escape(repo, seckey):
+    """
+    Scan a local or remote repository for potential shell escape vulnerabilities.
 
-    vulnerabilities = scan_repo(repo_path)
+    REPO_INPUT can be a path to a local repository or a URL of a remote repository.
+    """
+    # Check if the input is a URL (starts with http, https, or git@)
+    if repo.startswith(("http://", "https://", "git@")):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            print(f"Cloning remote repository to temporary directory: {tmpdirname}")
+            download_repo(repo, tmpdirname, seckey)
+            vulnerabilities = scan_repo(tmpdirname)
+    else:
+        # Assuming the input is a local path
+        if not os.path.isdir(repo):
+            print("The provided path is not a directory.")
+            sys.exit(1)
+        vulnerabilities = scan_repo(repo)
+
     print_report(vulnerabilities)
 
 
