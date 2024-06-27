@@ -84,12 +84,12 @@ def trivy_install():
 
 
 @docker.command()
-@click.option('--name', prompt=True, help='Name of the Docker image to scan')
+@click.option('--image', prompt=True, help='Name or ID of the Docker image to scan')
 @click.option("--html", help="Specify the location to the HTML template file")
-def trivy(name, html):
+def trivy(image, html):
     """Run Trivy scan for a Docker image."""
     if html:
-        trimmed_name = name.split("/")[-1]
+        trimmed_name = image.split("/")[-1]
         # Define the Trivy command
         output_file = f"{trimmed_name}.html"
         template_path = html
@@ -98,10 +98,10 @@ def trivy(name, html):
             "--format", "template",
             "--template", f"@{template_path}",
             "-o", output_file,
-            name
+            image
         ]
     else:
-        cmd = ["trivy", "image", name]
+        cmd = ["trivy", "image", image]
 
     # Execute the Trivy command
     try:

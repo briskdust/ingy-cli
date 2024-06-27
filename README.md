@@ -118,6 +118,7 @@ Prompts the user to enter the path to the repository. The user can enter the URL
 - `wrap_text(text, width)`: Wraps text to a specified width.
 
 ### Example Commands
+User can always use the `--help` flag to get more information about the commands and their options.
 
 #### Upload and Scan APK Files
 
@@ -164,7 +165,3 @@ To extend the script to support more languages, you need to update two main comp
 
 1. **File Extensions**: Add the file extensions of the new languages to the `FILE_EXTENSIONS` list.
 2. **Patterns**: Add regex patterns to identify potential shell escape vulnerabilities in the `PATTERNS` dictionary.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
