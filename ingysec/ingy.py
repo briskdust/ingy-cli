@@ -19,7 +19,7 @@ from utils import (
 
 from shell_escape_finder import scan_repo, print_report, download_repo
 
-from initialization import init_mobsf, install_trivy
+from initialization import init_mobsf, install_trivy, install_bandit
 
 
 @click.group()
@@ -115,6 +115,12 @@ def trivy(image, html):
 
 
 # ------------------------------- Code Command -------------------------------
+@code.command()
+def bandit_install():
+    """Install Bandit."""
+    install_bandit()
+
+
 @code.command()
 def bandit():
     """Run Bandit to check Python code for security vulnerabilities."""

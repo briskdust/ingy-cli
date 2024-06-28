@@ -29,3 +29,8 @@ def install_trivy():
     for command in commands:
         cmd = command.split(" ")
         subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+def install_bandit():
+    """Install Bandit for scanning Python code for security vulnerabilities."""
+    subprocess.run(['pip', 'install', 'bandit'], check=True)
