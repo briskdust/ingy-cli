@@ -11,15 +11,15 @@ import tempfile
 
 import click
 
-from utils import (
+from ingysec.utils import (
     upload,
     process_response,
     compare_reports,
 )
 
-from shell_escape_finder import scan_repo, print_report, download_repo
+from ingysec.shell_escape_finder import scan_repo, print_report, download_repo
 
-from initialization import init_mobsf, install_trivy, install_bandit
+from ingysec.initialization import init_mobsf, install_trivy, install_bandit
 
 
 @click.group()
