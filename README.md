@@ -132,7 +132,7 @@ To implement a new command, create a new command group in `ingysec/ingy.py`:
 ```python
 @main.group()
 def example_command():
-"""This is an example command group."""
+    """This is an example command group."""
     pass
 ```
 
@@ -140,7 +140,7 @@ Then, add a new command to the group:
 ```python
 @example_command.command()
 def new_command():
-"""This is a new command."""
+    """This is a new command."""
     pass
 ```
 
