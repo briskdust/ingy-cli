@@ -70,9 +70,9 @@ ingysec mobile mobsf_init
 #### Configuration
 Set the `MOBSF_APIKEY` environment variable with your MobSF API key:
 
-    ```sh
-    export MOBSF_APIKEY=your_mobsf_api_key
-    ```
+```shell
+export MOBSF_APIKEY=your_mobsf_api_key
+```
 
 #### Scan APK Files
 
@@ -80,9 +80,8 @@ Set the `MOBSF_APIKEY` environment variable with your MobSF API key:
 ingysec mobile mobsf --apikey YOUR_API_KEY --pdf output.pdf path/to/file1.apk path/to/file2.apk
 ```
 
-- `files`: Paths to APK files.
 - `--apikey`: API key for MobSF authentication. Or set the `MOBSF_APIKEY` environment variable.
-- `--pdf`: Optional. If specified, generates a PDF report.
+- `--pdf`: Optional. If specified, generates a PDF report, otherwise the results will be displayed in terminal as a table.
 
 ### Docker Commands
 
@@ -97,10 +96,10 @@ ingysec docker trivy_install
 #### Scan Docker Images
 
 ```sh
-ingy docker trivy --name IMAGE_NAME --html template.html
+ingysec docker trivy --name IMAGE_NAME --html template.html
 ```
 
-- `--name`: Name of the Docker image to scan.
+- `--name`: Name or ID of the Docker image to scan.
 - `--html`: Optional. Path to an HTML template file for generating the report. If not present, the results will be
     displayed in the terminal as a table.
 

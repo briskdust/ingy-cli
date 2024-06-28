@@ -4,6 +4,10 @@
 
 .vscode/
 
+envs/
+env/
+*.env
+
 .venv/
 venv/
 
