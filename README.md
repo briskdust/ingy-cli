@@ -16,6 +16,8 @@ A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files 
 
 
 ## Installation
+| :exclamation: Note: Make sure you have Docker installed and running. |
+|----------------------------------------------------------------------|
 
 ### Install from Source Code
 1. **Clone the repository:**
@@ -31,9 +33,7 @@ A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files 
     poetry install
     ```
 
-3. **Ensure you have Docker installed and running**
-
-4. **Run the CLI tool:**
+3. **Run the CLI tool:**
 
     ```sh
     python -m ingysec.ingy
