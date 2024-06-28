@@ -1,6 +1,6 @@
 # Security Scanner CLI Tool
 
-A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files and Docker images for security vulnerabilities using MobSF and Trivy.
+A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files, Docker images and code repository for security vulnerabilities using various security tools.
 
 ## Table of Contents
 
