@@ -6,12 +6,14 @@ A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files 
 
 - [Installation](#installation)
 - [Usage](#usage)
-  - [MobSF Commands](#mobsf-commands)
-  - [Trivy Commands](#trivy-commands)
-- [Configuration](#configuration)
-- [Functions](#functions)
-- [Contributing](#contributing)
-- [License](#license)
+  - [Mobile Commands](#mobile-commands)
+  - [Docker Commands](#docker-commands)
+  - [Code Commands](#code-commands)
+- [Extending the Tool](#extending-the-tool)
+  - [Adding New Commands](#adding-new-commands)
+  - [Adding New Functions](#adding-new-functions)
+  - [Extending `shell_escape_finder.py`](#extending-shell_escape_finderpy)
+
 
 ## Installation
 
@@ -53,9 +55,9 @@ A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files 
 
 ## Usage
 
-This CLI tool supports multiple commands grouped under `cloud`, `mobile`, and `gateway`.
+This CLI tool supports multiple commands grouped under `mobile`, `docker`, and `code`.
 
-### MobSF Commands
+### Mobile Commands
 
 Scan and analyze APK files for security vulnerabilities using MobSF.
 
@@ -82,7 +84,7 @@ ingysec mobile mobsf --apikey YOUR_API_KEY --pdf output.pdf path/to/file1.apk pa
 - `--apikey`: API key for MobSF authentication. Or set the `MOBSF_APIKEY` environment variable.
 - `--pdf`: Optional. If specified, generates a PDF report.
 
-### Trivy Commands
+### Docker Commands
 
 Run Trivy scan for a Docker image.
 
