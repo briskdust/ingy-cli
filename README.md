@@ -15,6 +15,7 @@ A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files 
 
 ## Installation
 
+### Install from Source Code
 1. **Clone the repository:**
 
     ```sh
@@ -28,9 +29,27 @@ A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files 
     poetry install
     ```
 
-3. **Ensure you have Trivy installed:** 
+3. **Ensure you have Docker installed and running**
 
-    Follow the [official Trivy installation guide](https://github.com/aquasecurity/trivy#installation).
+4. **Run the CLI tool:**
+
+    ```sh
+    python -m ingysec.ingy
+    ```
+
+### Install using Pip
+
+1. **Install the tool from PyPI:**
+
+    ```sh
+    pip install ingysec
+    ```
+
+2. **Run the CLI tool:**
+
+    ```sh
+    ingysec
+    ```
 
 ## Usage
 
@@ -46,10 +65,17 @@ This command will initialize the MobSF docker container and run it on port 3000.
 ingysec mobile mobsf_init
 ```
 
+#### Configuration
+Set the `MOBSF_APIKEY` environment variable with your MobSF API key:
+
+    ```sh
+    export MOBSF_APIKEY=your_mobsf_api_key
+    ```
+
 #### Scan APK Files
 
 ```sh
-python cli_tool.py mobile mobsf --apikey YOUR_API_KEY --pdf output.pdf path/to/file1.apk path/to/file2.apk
+ingysec mobile mobsf --apikey YOUR_API_KEY --pdf output.pdf path/to/file1.apk path/to/file2.apk
 ```
 
 - `files`: Paths to APK files.
@@ -63,13 +89,13 @@ Run Trivy scan for a Docker image.
 #### Installation
 This command will install Trivy on your system. Only run it once, and it only works on **Linux(Debian/Ubuntu)** systems.
 ```shell
-ingysec cloud trivy_install
+ingysec docker trivy_install
 ```
 
 #### Scan Docker Images
 
 ```sh
-python cli_tool.py cloud trivy --name IMAGE_NAME --html template.html
+ingy docker trivy --name IMAGE_NAME --html template.html
 ```
 
 - `--name`: Name of the Docker image to scan.
@@ -93,50 +119,10 @@ Sets the severity level to high (-ll) and reports all discovered security issues
 Scan code for potential shell escape vulnerabilities.
 
 ```sh
-ingysec code shell-escape
+ingysec code shell-escape REPONAME --seckey PATH
 ```
-Prompts the user to enter the path to the repository. The user can enter the URL of a remote repository and utilize the
+The user needs to enter the path to the repository which can also be the URL of a remote repository and utilize the
 `--seckey` flag to specify the path to the SSH private key for cloning the repository. Supports shell expansion, such as `~` to the full home directory path and verifies that the provided path is a directory.
-## Configuration
-
-### MobSF Configuration
-
-- Set the `MOBSF_APIKEY` environment variable with your MobSF API key:
-
-    ```sh
-    export MOBSF_APIKEY=your_mobsf_api_key
-    ```
-
-### Functions
-
-- `upload(x, apikey)`: Uploads an APK file to the MobSF server.
-- `scan(data, apikey)`: Initiates the scan of the uploaded APK file.
-- `json_resp(data, apikey)`: Generates a JSON report of the scan.
-- `gen_pdf(data, apikey, output_location)`: Generates a PDF report of the scan.
-- `compare(hash1, hash2, apikey)`: Compares two APK scans based on their hashes.
-- `gen_table(json_dict)`: Generates a table from the JSON report.
-- `wrap_text(text, width)`: Wraps text to a specified width.
-
-### Example Commands
-User can always use the `--help` flag to get more information about the commands and their options.
-
-#### Upload and Scan APK Files
-
-```sh
-python cli_tool.py mobile mobsf path/to/file1.apk --apikey YOUR_API_KEY
-```
-
-#### Generate PDF Report
-
-```sh
-python cli_tool.py mobile mobsf path/to/file1.apk --apikey YOUR_API_KEY --pdf output.pdf
-```
-
-#### Run Trivy Scan
-
-```sh
-python cli_tool.py cloud trivy --name docker/image:latest
-```
 
 ## Extending the Tool
 
