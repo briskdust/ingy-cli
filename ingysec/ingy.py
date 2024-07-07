@@ -197,7 +197,7 @@ def shell_escape(repo, seckey):
     '--assignee', prompt='Assignee',
     default='', help='Assignee username'
 )
-def create_ticket(
+def create_ticket(  # pylint: disable=R0913
         server, email, api_token,
         project, summary, description,
         issuetype, priority, assignee
