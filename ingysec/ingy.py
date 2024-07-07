@@ -197,7 +197,11 @@ def shell_escape(repo, seckey):
     '--assignee', prompt='Assignee',
     default='', help='Assignee username'
 )
-def create_ticket(server, email, api_token, project, summary, description, issuetype, priority, assignee):
+def create_ticket(
+        server, email, api_token,
+        project, summary, description,
+        issuetype, priority, assignee
+):
     """Create a new Jira ticket."""
     jira_options = {'server': server}
     jira = JIRA(options=jira_options, basic_auth=(email, api_token))
