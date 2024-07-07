@@ -10,6 +10,7 @@ import sys
 import tempfile
 
 import click
+from jira import JIRA
 
 from ingysec.utils import (
     upload,
@@ -43,6 +44,11 @@ def mobile():
 @main.group()
 def code():
     """Commands for scanning code for security vulnerabilities."""
+
+
+@main.group()
+def ticket():
+    """Commands for creating Jira tickets."""
 
 
 # ------------------------------- MOBSF Command -------------------------------
@@ -153,6 +159,45 @@ def shell_escape(repo, seckey):
         vulnerabilities = scan_repo(repo)
 
     print_report(vulnerabilities)
+
+
+# ------------------------------- Ticket Command -------------------------------
+@ticket.command()
+@click.option('--server', envvar='JIRA_SERVER', prompt='Jira Server URL', help='Jira Server URL')
+@click.option('--email', envvar='JIRA_EMAIL', prompt='Jira Email', help='Jira Email')
+@click.option('--api_token', envvar='JIRA_API_TOKEN', prompt='Jira API Token', help='Jira API Token')
+@click.option('--project', prompt='Project Key', default='INGY', help='Jira Project Key')
+@click.option('--summary', prompt='Summary', help='Ticket Summary')
+@click.option('--description', prompt='Description', help='Ticket Description')
+@click.option('--issuetype', prompt='Issue Type', default='Bug', help='Issue Type (e.g., Bug, Task)')
+@click.option('--priority', prompt='Priority', default='Medium', help='Issue Priority (e.g., Low, Medium, High)')
+@click.option('--assignee', prompt='Assignee', default='', help='Assignee username')
+def create_ticket(server, email, api_token, project, summary, description, issuetype, priority, assignee):
+    """Create a new Jira ticket."""
+    jira_options = {'server': server}
+    jira = JIRA(options=jira_options, basic_auth=(email, api_token))
+
+    # List all issue types
+    issue_types = jira.issue_types()
+    for itype in issue_types:
+        click.echo(f"Issue Type: {itype.name} - {itype.id}")
+
+    issue_dict = {
+        'project': {'key': project},
+        'summary': summary,
+        'description': description,
+        'issuetype': {'name': issuetype},
+        'priority': {'name': priority},
+    }
+
+    if assignee:
+        issue_dict['assignee'] = {'name': assignee}
+
+    new_issue = jira.create_issue(fields=issue_dict)
+    click.echo(f"Created ticket with ID: {new_issue.key}")
+
+
+main.add_command(create_ticket)
 
 
 if __name__ == '__main__':

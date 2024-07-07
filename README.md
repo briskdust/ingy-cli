@@ -62,7 +62,7 @@ This CLI tool supports multiple commands grouped under `mobile`, `docker`, and `
 Scan and analyze APK files for security vulnerabilities using MobSF.
 
 #### Initialization
-This command will initialize the MobSF docker container and run it on port 3000. It will also provide the API key for the MobSF server.
+This command will initialize the MobSF docker container and run it on port 8000. It will also provide the API key for the MobSF server.
 ```shell
 ingysec mobile mobsf_init
 ```
