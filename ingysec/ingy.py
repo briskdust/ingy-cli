@@ -163,15 +163,40 @@ def shell_escape(repo, seckey):
 
 # ------------------------------- Ticket Command -------------------------------
 @ticket.command()
-@click.option('--server', envvar='JIRA_SERVER', prompt='Jira Server URL', help='Jira Server URL')
-@click.option('--email', envvar='JIRA_EMAIL', prompt='Jira Email', help='Jira Email')
-@click.option('--api_token', envvar='JIRA_API_TOKEN', prompt='Jira API Token', help='Jira API Token')
-@click.option('--project', prompt='Project Key', default='INGY', help='Jira Project Key')
-@click.option('--summary', prompt='Summary', help='Ticket Summary')
-@click.option('--description', prompt='Description', help='Ticket Description')
-@click.option('--issuetype', prompt='Issue Type', default='Bug', help='Issue Type (e.g., Bug, Task)')
-@click.option('--priority', prompt='Priority', default='Medium', help='Issue Priority (e.g., Low, Medium, High)')
-@click.option('--assignee', prompt='Assignee', default='', help='Assignee username')
+@click.option(
+    '--server', envvar='JIRA_SERVER',
+    prompt='Jira Server URL', help='Jira Server URL'
+)
+@click.option(
+    '--email', envvar='JIRA_EMAIL',
+    prompt='Jira Email', help='Jira Email'
+)
+@click.option(
+    '--api_token', envvar='JIRA_API_TOKEN',
+    prompt='Jira API Token', help='Jira API Token'
+)
+@click.option(
+    '--project', prompt='Project Key',
+    default='INGY', help='Jira Project Key'
+)
+@click.option(
+    '--summary', prompt='Summary', help='Ticket Summary'
+)
+@click.option(
+    '--description', prompt='Description', help='Ticket Description'
+)
+@click.option(
+    '--issuetype', prompt='Issue Type',
+    default='Bug', help='Issue Type (e.g., Bug, Task)'
+)
+@click.option(
+    '--priority', prompt='Priority',
+    default='Medium', help='Issue Priority (e.g., Low, Medium, High)'
+)
+@click.option(
+    '--assignee', prompt='Assignee',
+    default='', help='Assignee username'
+)
 def create_ticket(server, email, api_token, project, summary, description, issuetype, priority, assignee):
     """Create a new Jira ticket."""
     jira_options = {'server': server}
