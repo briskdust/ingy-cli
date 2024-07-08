@@ -103,11 +103,12 @@ def trivy(image, html):
             "trivy", "image",
             "--format", "template",
             "--template", f"@{template_path}",
+            "--severity", "HIGH,CRITICAL",
             "-o", output_file,
             image
         ]
     else:
-        cmd = ["trivy", "image", image]
+        cmd = ["trivy", "image", "--severity", "HIGH,CRITICAL", image]
 
     # Execute the Trivy command
     try:
@@ -224,9 +225,6 @@ def create_ticket(  # pylint: disable=R0913
 
     new_issue = jira.create_issue(fields=issue_dict)
     click.echo(f"Created ticket with ID: {new_issue.key}")
-
-
-main.add_command(create_ticket)
 
 
 if __name__ == '__main__':
