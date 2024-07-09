@@ -23,7 +23,7 @@ def upload(x, apikey):
         multipart_data = MultipartEncoder(fields={'file': (x, file, 'application/octet-stream')})
         headers = {'Content-Type': multipart_data.content_type, 'Authorization': apikey}
         response = requests.post(SERVER + '/api/v1/upload', data=multipart_data,
-                             headers=headers, timeout=10)
+                                 headers=headers, timeout=10)
         print(response.text)
 
         return response.text
@@ -82,10 +82,12 @@ def format_nested_dict(d, indent=0):
             items.append(format_nested_dict(value, indent + 4))
         elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
             items.append(
-                f"{' ' * indent}{key}: [{', '.join(format_nested_dict(i, indent + 4) for i in value)}]"
+                f"{' ' * indent}{key}: ["
+                f"{', '.join(format_nested_dict(i, indent + 4) for i in value)}"
+                "]"
             )
         else:
-            formatted_value = json.dumps(value, indent=indent + 4)\
+            formatted_value = json.dumps(value, indent=indent + 4) \
                 if isinstance(value, list) else value
             items.append(f"{' ' * indent}{key}: {formatted_value}")
     return "\n".join(items)
