@@ -81,8 +81,9 @@ def format_nested_dict(d, indent=0):
             items.append(f"{' ' * indent}{key}:")
             items.append(format_nested_dict(value, indent + 4))
         elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
-            items.append(f"{' ' * indent}{key}: [{', '.
-                         join(format_nested_dict(i, indent + 4) for i in value)}]")
+            items.append(
+                f"{' ' * indent}{key}: [{', '.join(format_nested_dict(i, indent + 4) for i in value)}]"
+            )
         else:
             formatted_value = json.dumps(value, indent=indent + 4)\
                 if isinstance(value, list) else value
