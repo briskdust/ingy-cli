@@ -317,8 +317,7 @@ def colorize_score(score):
             return f"[red]{score}[/red]"
         if score <= 69:
             return f"[yellow]{score}[/yellow]"
-        else:
-            return f"[green]{score}[/green]"
+        return f"[green]{score}[/green]"
     except ValueError:
         return str(score)
 
