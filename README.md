@@ -4,6 +4,8 @@ A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files,
 
 ## Table of Contents
 
+- [Features](#features)
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Mobile Commands](#mobile-commands)
@@ -14,6 +16,24 @@ A Command Line Interface (CLI) tool for scanning and analyzing mobile APK files,
   - [Adding New Functions](#adding-new-functions)
   - [Extending `shell_escape_finder.py`](#extending-shell_escape_finderpy)
 
+
+## Features
+
+- Mobile App Analysis: Scan APK files using MobSF for comprehensive mobile app security assessment.
+- Docker Image Scanning: Analyze Docker images for vulnerabilities using Trivy.
+- Code Repository Analysis:
+
+    - Use Bandit for Python code security checks.
+    - Custom shell escape vulnerability detection for Python, JavaScript, and Bash files.
+
+
+- Rich CLI Output: Enhanced readability with colored and formatted output using the Rich library.
+- Jira Integration: Create Jira tickets based on scan results for streamlined workflow integration.
+
+## Prerequisites
+- Python 3.12+
+- Docker (for MobSF and Trivy functionality)
+- Git (for repository scanning features)
 
 ## Installation
 | :exclamation: Note: Make sure you have Docker installed and running. |
@@ -124,6 +144,42 @@ ingysec code shell-escape REPONAME --seckey PATH
 ```
 The user needs to enter the path to the repository which can also be the URL of a remote repository and utilize the
 `--seckey` flag to specify the path to the SSH private key for cloning the repository. Supports shell expansion, such as `~` to the full home directory path and verifies that the provided path is a directory.
+
+### Jira Commands
+Create a new Jira ticket based on scan results or manual input:
+
+```sh
+ingysec ticket create_ticket \
+  --server https://your-domain.atlassian.net \
+  --email your-email@example.com \
+  --api_token your-api-token \
+  --project PROJ \
+  --summary "Security Issue Found" \
+  --description "Description of the security issue" \
+  --issuetype Bug \
+  --priority High \
+  --assignee username
+```
+
+You can also set environment variables for Jira credentials:
+```sh
+export JIRA_SERVER=https://your-domain.atlassian.net
+export JIRA_EMAIL=your-email@example.com
+export JIRA_API_TOKEN=your-api-token
+```
+
+Then run the command without these options:
+```sh
+ingysec ticket create_ticket \
+  --project PROJ \
+  --summary "Security Issue Found" \
+  --description "Description of the security issue" \
+  --issuetype Bug \
+  --priority High \
+  --assignee username
+```
+
+The tool will prompt for any missing required information.
 
 ## Extending the Tool
 
