@@ -16,6 +16,7 @@ boofuzz = "^0.4.2"
 semgrep = "^1.75.0"
 bandit = "^1.7.8"
 jira = "^3.8.0"
+rich = "^13.7.1"
 
 [tool.poetry.scripts]
 ingysec = "ingysec.ingy:main"

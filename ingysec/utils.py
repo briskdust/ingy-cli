@@ -10,6 +10,15 @@ import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from tabulate import tabulate
 
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich.text import Text
+from rich import box
+
+console = Console()
+
+
 SERVER = "http://127.0.0.1:8000"
 
 
@@ -225,59 +234,52 @@ def remove_non_security_related_keys(data):
 
 def process_json(json_str):
     """Process JSON data and generate two lists of data"""
-    data = json_str
+    data = json.loads(json_str)
 
-    table_data = []
+    # Define a function to get color based on severity
+    def get_severity_color(severity):
+        return {
+            "high": "red",
+            "warning": "yellow",
+            "info": "blue",
+            "secure": "green",
+            "hotspot": "magenta"
+        }.get(severity, "white")
 
-    # Define table headers
-    headers = ["Severity", "Title", "Description", "Section"]
-    severity_text = ""
-
-    # Define a function to colorize text
-    def colorize_text(text, color_code):
-        return f"\033[{color_code}m{text}\033[0m"
-
-    def wrap_section(text, width=60):
-        return textwrap.TextWrapper(width=width, break_long_words=False, break_on_hyphens=True,
-                                    replace_whitespace=False).fill(text)
+    # Create a table for security issues
+    table = Table(title="Security Issues", box=box.ROUNDED)
+    table.add_column("Severity", style="cyan", no_wrap=True)
+    table.add_column("Title", style="magenta")
+    table.add_column("Description", style="green")
+    table.add_column("Section", style="yellow")
 
     # Deal with each severity level
-    for severity in ["high", "warning", "info", "secure"]:
+    for severity in ["high", "warning", "info", "secure", "hotspot"]:
         if severity in data:
             for item in data[severity]:
-                if severity == "high":
-                    severity_text = colorize_text("HIGH", "91")  # Red
-                elif severity == "warning":
-                    severity_text = colorize_text("WARNING", "93")  # Yellow
-                elif severity == "info":
-                    severity_text = colorize_text("INFO", "94")  # Blue
-                elif severity == "secure":
-                    severity_text = colorize_text("SECURE", "92")  # Green
-                elif severity == "hotspot":
-                    severity_text = colorize_text("HOTSPOT", "95")  # Magenta
+                table.add_row(
+                    Text(severity.upper(), style=get_severity_color(severity)),
+                    Text(item["title"], overflow="fold"),
+                    Text(item["description"], overflow="fold"),
+                    Text(item["section"], overflow="fold")
+                )
 
-                wrapped_title = wrap_section(item["title"])
-                wrapped_description = wrap_section(item["description"])
-                wrapped_section = wrap_section(item["section"])
+    # Create a panel for additional information
+    additional_info = Panel(
+        f"""
+        [cyan]Security Score:[/cyan] {colorize_score(data.get('security_score', 'N/A'))}
+        [cyan]App Name:[/cyan] {data.get('app_name', 'N/A')}
+        [cyan]File Name:[/cyan] {data.get('file_name', 'N/A')}
+        [cyan]Hash:[/cyan] {data.get('hash', 'N/A')}
+        [cyan]Version:[/cyan] {data.get('version_name', 'N/A')}
+        [cyan]Total Trackers:[/cyan] {data.get('total_trackers', 'N/A')}
+        [cyan]Trackers:[/cyan] {data.get('trackers', 'N/A')}
+        """,
+        title="Additional Information",
+        expand=False
+    )
 
-                table_data.append([severity_text, wrapped_title,
-                                   wrapped_description, wrapped_section])
-
-    # Add additional information
-    additional_info = [
-        ["Security Score", colorize_score(data.get("security_score", "N/A"))],
-        ["App Name", data.get("app_name", "N/A")],
-        ["File Name", data.get("file_name", "N/A")],
-        ["Hash", data.get("hash", "N/A")],
-        ["Version", data.get("version_name", "N/A")],
-        ["Total Trackers", data.get("total_trackers", "N/A")],
-        ["Trackers", data.get("trackers", "N/A")],
-    ]
-
-    basic_info = tabulate(additional_info, headers=["Key", "Value"], tablefmt="fancy_grid")
-    sec_info = tabulate(table_data, headers=headers, tablefmt="fancy_grid")
-
-    return [basic_info, sec_info]
+    return additional_info, table
 
 
 def process_response(response, apikey, pdf):
@@ -289,14 +291,36 @@ def process_response(response, apikey, pdf):
         j_dict = json.loads(new_rep_json)
 
         check_list, table_data = gen_table(j_dict)
-        wrapped_data = [[item[0], wrap_text(item[1], width=150)] for item in table_data]
-        check_lst = process_json(check_list)
+        additional_info, security_table = process_json(json.dumps(check_list))
 
-        print(check_lst[0])
-        print(check_lst[1])
-        print(tabulate(wrapped_data, headers=["Key", "Value"], tablefmt="fancy_grid"))
+        console.print(additional_info)
+        console.print(security_table)
+
+        # Create a table for other data
+        other_data_table = Table(title="Other Data", box=box.ROUNDED)
+        other_data_table.add_column("Key", style="cyan")
+        other_data_table.add_column("Value", style="green")
+
+        for item in table_data:
+            other_data_table.add_row(item[0], Text(str(item[1]), overflow="fold"))
+
+        console.print(other_data_table)
     else:
         gen_pdf(response, apikey, pdf)
+
+
+def colorize_score(score):
+    """Colorize the security score based on the value"""
+    try:
+        score = int(score)
+        if score < 40:
+            return f"[red]{score}[/red]"
+        elif 41 <= score <= 69:
+            return f"[yellow]{score}[/yellow]"
+        else:
+            return f"[green]{score}[/green]"
+    except ValueError:
+        return str(score)
 
 
 def compare_reports(responses, apikey):
@@ -305,16 +329,3 @@ def compare_reports(responses, apikey):
     hash2 = json.loads(responses[1])["hash"]
     comparison = compare(hash1, hash2, apikey)
     prettify_json(comparison)
-
-
-def colorize_score(score):
-    """Colorize the security score based on the value"""
-    if score < 40:
-        color = "\033[91m"  # Red
-    elif 41 <= score <= 69:
-        color = "\033[93m"  # Yellow
-    else:
-        color = "\033[92m"  # Green
-
-    reset = "\033[0m"
-    return f"{color}{score}{reset}"

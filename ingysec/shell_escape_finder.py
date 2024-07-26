@@ -8,6 +8,13 @@ import re
 import sys
 import subprocess
 
+from rich.console import Console
+from rich.table import Table
+from rich import box
+
+console = Console()
+
+
 # Define file extensions to check
 FILE_EXTENSIONS = ['.py', '.sh', '.js']
 
@@ -61,14 +68,21 @@ def scan_repo(repo_path):
 def print_report(vulnerabilities):
     """Print the vulnerabilities found in the repository."""
     if not vulnerabilities:
-        print("No potential shell escape vulnerabilities found.")
+        console.print("[green]No potential shell escape vulnerabilities found.[/green]")
         return
+
     for file_path, findings in vulnerabilities.items():
-        print(f"\nFile: {file_path}")
+        table = Table(title=f"File: {file_path}", box=box.ROUNDED)
+        table.add_column("Line", style="cyan", no_wrap=True)
+        table.add_column("Vulnerability", style="magenta")
+        table.add_column("Match", style="yellow")
+
         for vuln_name, line_num, matches in findings:
-            print(f"  Line {line_num}: Vulnerability: {vuln_name}")
             for match in matches:
-                print(f"    {match}")
+                table.add_row(str(line_num), vuln_name, match)
+
+        console.print(table)
+        console.print()  # Add a blank line between tables
 
 
 def download_repo(repo_url, dest_path, seckey=None):

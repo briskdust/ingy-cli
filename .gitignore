@@ -24,3 +24,5 @@ __pycache__/
 .idea/
 
 results/
+
+dist/
