@@ -313,9 +313,9 @@ def colorize_score(score):
     """Colorize the security score based on the value"""
     try:
         score = int(score)
-        if score < 40:
+        if score <= 40:
             return f"[red]{score}[/red]"
-        elif 41 <= score <= 69:
+        if score <= 69:
             return f"[yellow]{score}[/yellow]"
         else:
             return f"[green]{score}[/green]"
